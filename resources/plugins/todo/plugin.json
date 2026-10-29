@@ -1,0 +1,12 @@
+{
+  "id": "todo",
+  "name": "轻量待办",
+  "version": "1.0.0",
+  "author": "Lumen",
+  "description": "插件也能持久化数据：随时记一条待办，完成后打勾或删除",
+  "icon": "✅",
+  "aliases": ["todo", "待办", "任务"],
+  "participatesInRoot": false,
+  "rank": 64,
+  "main": "index.js"
+}

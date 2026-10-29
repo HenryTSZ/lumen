@@ -1,0 +1,12 @@
+{
+  "id": "uuid",
+  "name": "随机生成器",
+  "version": "1.0.0",
+  "author": "Lumen",
+  "description": "生成 UUID v4 / 随机密码 / 时间戳",
+  "icon": "🎲",
+  "aliases": ["uuid", "guid", "rand", "随机"],
+  "participatesInRoot": false,
+  "rank": 62,
+  "main": "index.js"
+}

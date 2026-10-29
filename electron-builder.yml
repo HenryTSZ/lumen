@@ -1,0 +1,52 @@
+appId: com.lumen.launcher
+productName: Lumen
+copyright: Copyright © 2026 Lumen
+
+directories:
+  output: dist
+  buildResources: resources
+
+files:
+  - out/**
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!scripts/*"
+  - "!node_modules/*"
+
+extraResources:
+  - from: resources
+    to: .
+    filter:
+      - icon.ico
+      - icon.png
+      - tray.png
+      - plugins/**
+
+asar: true
+
+win:
+  icon: resources/icon.ico
+  artifactName: Lumen-Setup-${version}.${ext}
+  requestedExecutionLevel: asInvoker
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: false
+  createStartMenuShortcut: true
+  shortcutName: Lumen
+  uninstallDisplayName: Lumen (Raycast for Windows)
+
+portable:
+  artifactName: Lumen-${version}-portable.exe
+
+compression: maximum

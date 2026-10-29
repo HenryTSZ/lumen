@@ -1,0 +1,12 @@
+{
+  "id": "base64",
+  "name": "Base64 编解码",
+  "version": "1.0.0",
+  "author": "Lumen",
+  "description": "文本 ↔ Base64 互转，支持 URL 安全变体",
+  "icon": "🔐",
+  "aliases": ["b64", "base64", "编码"],
+  "participatesInRoot": false,
+  "rank": 61,
+  "main": "index.js"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "json-tools",
+  "name": "JSON 工具箱",
+  "version": "1.0.0",
+  "author": "Lumen",
+  "description": "格式化 / 压缩 / 校验 JSON，并直接复制到剪贴板",
+  "icon": "🧰",
+  "aliases": ["json", "jsonformat"],
+  "participatesInRoot": false,
+  "rank": 60,
+  "main": "index.js"
+}

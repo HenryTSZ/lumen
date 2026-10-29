@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-29",
+  "plugins": [
+    {
+      "id": "json-tools",
+      "name": "JSON 工具箱",
+      "version": "1.0.0",
+      "author": "Lumen",
+      "description": "格式化 / 压缩 / 校验 JSON，结果直接复制",
+      "icon": "🧰",
+      "source": "builtin",
+      "tags": ["开发", "文本"],
+      "aliases": ["json", "jsonformat"],
+      "rank": 60
+    },
+    {
+      "id": "base64",
+      "name": "Base64 编解码",
+      "version": "1.0.0",
+      "author": "Lumen",
+      "description": "文本 ↔ Base64 互转，支持 URL 安全变体",
+      "icon": "🔐",
+      "source": "builtin",
+      "tags": ["开发", "编码"],
+      "aliases": ["b64", "base64", "编码"],
+      "rank": 61
+    },
+    {
+      "id": "uuid",
+      "name": "随机生成器",
+      "version": "1.0.0",
+      "author": "Lumen",
+      "description": "UUID v4 / 强密码 / 时间戳，一键复制",
+      "icon": "🎲",
+      "source": "builtin",
+      "tags": ["工具"],
+      "aliases": ["uuid", "guid", "rand", "随机"],
+      "rank": 62
+    },
+    {
+      "id": "color",
+      "name": "颜色转换",
+      "version": "1.0.0",
+      "author": "Lumen",
+      "description": "HEX / RGB / HSL 互转，并给出文字对比度建议",
+      "icon": "🎨",
+      "source": "builtin",
+      "tags": ["设计", "工具"],
+      "aliases": ["color", "hex", "颜色", "色值"],
+      "rank": 63
+    },
+    {
+      "id": "todo",
+      "name": "轻量待办",
+      "version": "1.0.0",
+      "author": "Lumen",
+      "description": "随手记待办，插件存储持久化，完成即打勾",
+      "icon": "✅",
+      "source": "builtin",
+      "tags": ["效率"],
+      "aliases": ["todo", "待办", "任务"],
+      "rank": 64
+    }
+  ]
+}

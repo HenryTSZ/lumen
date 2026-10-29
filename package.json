@@ -1,0 +1,52 @@
+{
+  "name": "lumen",
+  "version": "1.0.0",
+  "description": "Lumen — 一款为 Windows 打造的 Raycast 风格生产力启动器",
+  "main": "./out/main/index.cjs",
+  "license": "MIT",
+  "homepage": "https://github.com/<your-username>/lumen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<your-username>/lumen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<your-username>/lumen/issues"
+  },
+  "author": "Lumen",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "node scripts/gen-preview-plugins.mjs && electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "dist:win": "npm run build && electron-builder --win --x64",
+    "dist:dir": "npm run build && electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "pinyin-match": "^1.2.10",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^6.0.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "raycast",
+    "launcher",
+    "spotlight",
+    "windows",
+    "productivity",
+    "electron"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "color",
+  "name": "颜色转换",
+  "version": "1.0.0",
+  "author": "Lumen",
+  "description": "HEX / RGB / HSL 互转，并给出对比度建议",
+  "icon": "🎨",
+  "aliases": ["color", "hex", "颜色", "色值"],
+  "participatesInRoot": false,
+  "rank": 63,
+  "main": "index.js"
+}
