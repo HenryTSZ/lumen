@@ -88,3 +88,98 @@ certutil -hashfile Lumen-Setup-1.0.0.exe SHA256
 ## 📄 License
 
 MIT © 2026 Lumen
+
+---
+
+<br>
+
+# Lumen v1.0.0 (English)
+
+> A Raycast-style productivity launcher for Windows. Electron 38 · React 19 · TypeScript · **zero native dependencies**.
+
+First stable release. Hit **Alt+Space**, and one input box handles it all: launching apps, finding files, doing math, converting units, browsing clipboard history, snapping windows, inspecting ports and installing plugins.
+
+![Main window](https://raw.githubusercontent.com/HenryTSZ/lumen/main/docs/images/01-root.png)
+
+## ✨ Highlights
+
+- **🧠 Adaptive ranking** — the more you use something, the higher it ranks; pin anything manually
+- **⚙️ Fully visual settings** — dropdowns, toggles, number and password fields. No JSON editing
+- **🛍️ Plugin store** — `store` to install or remove extensions; 5 plugins ship in the box, third-party ones supported
+- **🖼️ Clipboard handles images** — thumbnails, full previews and "save as PNG"
+- **🪟 Window snapping** — left/right half, maximize, center, move to next display
+- **📦 Zero native deps** — every system call goes through PowerShell + user32 P/Invoke, so `npm i` is all you need (no Visual Studio build tools)
+
+![Plugin store](https://raw.githubusercontent.com/HenryTSZ/lumen/main/docs/images/03-plugin-store.png)
+
+## 📦 Which file to download
+
+| File | For | Notes |
+|---|---|---|
+| `Lumen-Setup-1.0.0.exe` | Most users | NSIS installer, custom install path, Start Menu shortcut and clean uninstall |
+| `Lumen-1.0.0-portable.exe` | On the go | Portable build, writes nothing to the registry, run straight from a USB drive |
+
+Verify the download (optional):
+
+```powershell
+certutil -hashfile Lumen-Setup-1.0.0.exe SHA256
+```
+
+> Windows SmartScreen may say "unknown publisher" — the binaries are not code-signed yet. Choose **More info → Run anyway**.
+
+## 🚀 30-second quick start
+
+1. Press **Alt+Space** (if it's taken, Lumen falls back to Ctrl+Space and others; change it in Settings)
+2. Type an app name → Enter to launch
+3. Type `2+3*4`, `100km to mi` or `$250 换 人民币` → instant result, ready to copy
+4. Type `store` → browse the plugin store and install the JSON toolkit
+5. `Ctrl+,` opens Settings, **`Tab`** toggles the detail panel
+
+## 🧩 Built-in features
+
+| Feature | Trigger | Notes |
+|---|---|---|
+| 🚀 Apps | type directly / `app` | Start Menu + registry + UWP, real system icons, run as admin |
+| 🧮 Calculator | expression / `=` | Shunting-yard evaluator with `sin/cos/sqrt/log/!` |
+| 🔄 Unit & currency | e.g. `100km to mi` | 11 unit families + 22 currencies, Chinese phrasing supported |
+| 🧠 Adaptive ranking | automatic | Frequency + recency weighting, manual pinning |
+| 📂 File search | `f <query>` | Built-in incremental index, optional Everything backend |
+| 🌐 Web search | `s <query>` | Google / Bing / Baidu / DuckDuckGo |
+| 📋 Clipboard history | `clip` | Text, images and files; image thumbnails and save-as-PNG |
+| 🪟 Window switcher | `w <query>` | Reliable focus; half-screen, maximize, center and cross-display actions |
+| 🔌 Port inspector | `port 3000` | netstat parsing, see the process and kill it |
+| ⚙️ Process manager | `kill <name>` | Sorted by memory, fuzzy filter, force kill |
+| 📶 Wi-Fi networks | `wifi` | Nearby networks with signal strength and auth type |
+| ⚡ System commands | `sys` | Lock / sleep / hibernate / shutdown / restart / empty recycle bin / public IP |
+| 🧩 Custom commands | `ext` | Extend via `commands.json`, no code needed |
+| 🛍️ Plugin store | `store` | Install, uninstall, enable and disable extensions |
+| 🔗 Quicklinks | `ql` | Site search templates — `gh react` jumps straight there |
+| ✏️ Snippets | `snip` | Placeholders: `{clipboard}` `{date}` `{arg}` `{cursor}` |
+| 😀 Emoji picker | `emoji` | 1,898 emoji offline, searchable in English and Chinese |
+| 🔖 Bookmarks | `bm` | Fuzzy search across Chrome / Edge / Brave favorites |
+| ✨ AI assistant | `ai <question>` | Any OpenAI-compatible endpoint (DeepSeek by default) |
+| ⚙️ Settings | `settings` / `Ctrl+,` | Every option editable through forms |
+
+## 🔧 Requirements
+
+- Windows 10 1809 or later (Windows 11 recommended)
+- **The acrylic blur needs Windows 11**; Windows 10 falls back to translucency + renderer-side blur
+- No runtime to install — Electron is bundled
+
+## ⚠️ Known limitations
+
+- Shutdown / hibernate and killing system processes may trigger UAC
+- Clipboard history polls every 600 ms (keeps native deps at zero); in rare cases you may notice a sub-second delay
+- File search indexes your user folder by default; install [Everything](https://www.voidtools.com/) and set the `es.exe` path for instant whole-disk search
+- Port / process / Wi-Fi views parse system command output, so a few labels stay English on non-Chinese systems
+- Binaries are unsigned, so SmartScreen warns on first run
+
+## 🔜 What's next
+
+- Official plugin index (custom index URLs already work)
+- Custom theme CSS
+- Multi-language UI
+
+## 📄 License
+
+MIT © 2026 Lumen
