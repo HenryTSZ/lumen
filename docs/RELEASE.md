@@ -1,5 +1,7 @@
 # Lumen v1.0.0
 
+> 中文 / [English ↓](#lumen-v100-english)
+
 > 一款为 Windows 打造的 Raycast 风格生产力启动器。Electron 38 · React 19 · TypeScript · **零 native 依赖**。
 
 这是 Lumen 的首个正式版本。按 **Alt+Space** 唤起，一个输入框搞定：启动应用、搜文件、算数、换算单位、翻剪贴板、窗口分屏、查端口占用、装插件。
