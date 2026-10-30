@@ -8,7 +8,7 @@
 
 Electron 38 · React 19 · TypeScript · 零 native 依赖
 
-[在线体验 →](https://<your-username>.github.io/lumen/) · [下载发行版 →](https://github.com/<your-username>/lumen/releases)
+[在线体验 →](https://HenryTSZ.github.io/lumen/) · [下载发行版 →](https://github.com/HenryTSZ/lumen/releases)
 
 </div>
 

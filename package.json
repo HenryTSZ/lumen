@@ -4,13 +4,13 @@
   "description": "Lumen — 一款为 Windows 打造的 Raycast 风格生产力启动器",
   "main": "./out/main/index.cjs",
   "license": "MIT",
-  "homepage": "https://github.com/<your-username>/lumen",
+  "homepage": "https://github.com/HenryTSZ/lumen",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<your-username>/lumen.git"
+    "url": "git+https://github.com/HenryTSZ/lumen.git"
   },
   "bugs": {
-    "url": "https://github.com/<your-username>/lumen/issues"
+    "url": "https://github.com/HenryTSZ/lumen/issues"
   },
   "author": "Lumen",
   "scripts": {
