@@ -26,6 +26,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "electron-updater": "^6.8.11",
     "pinyin-match": "^1.2.10",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

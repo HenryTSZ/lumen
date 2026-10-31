@@ -8,6 +8,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   showInTray: true,
   launchAtLogin: false,
   language: 'zh',
+  autoUpdate: true,
   theme: 'dark',
   resultLimit: 60,
   everythingPath: '',

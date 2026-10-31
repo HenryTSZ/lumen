@@ -32,6 +32,7 @@ let settings: AppSettings = {
   showInTray: true,
   launchAtLogin: false,
   language: 'zh',
+  autoUpdate: true,
   theme: 'dark',
   resultLimit: 60,
   everythingPath: '',
@@ -427,6 +428,10 @@ export function createMockApi(): LumenApi {
     app: {
       info: async () => deep(machine),
       relaunch: async () => undefined
+    },
+    updater: {
+      check: async () => '当前已是最新版本（1.0.0）',
+      install: async () => false
     },
     usage: {
       all: async () => deep(usageMap),

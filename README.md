@@ -42,6 +42,10 @@ Electron 38 · React 19 · TypeScript · 零 native 依赖
 | 🔖 浏览器书签 | `bm` | 读取 Chrome / Edge / Brave 本地收藏夹，模糊搜索直达网址 |
 | ✨ AI 助手 | `ai 提问` | OpenAI 兼容接口（默认 DeepSeek），答案直接显示在详情面板 |
 | ⚙️ 设置 | `settings` 或 `Ctrl+,` | 全部设置表单化编辑（下拉/开关/数字/密码框），不用手改 JSON |
+| 🪟 Windows 设置搜索 | 直接输入 / `winset` | 100+ 条系统设置直达（蓝牙、默认应用、设备管理器…），ms-settings URI / 控制面板 / 管理工具全收录 |
+| ⌨️ 命令快捷键 | 设置 → 命令快捷键 | 给任意搜索词绑全局组合键，按下即执行（Raycast Hotkeys） |
+| 🌐 中英双语界面 | 设置 → 通用 | UI/动作名/provider 名称随语言即时切换，英文用户开箱即用 |
+| 🔄 自动更新 | 设置 → 关于 | 对接 GitHub Releases，每 12 小时后台检查，下载完成后一键重启安装 |
 
 ## 📸 界面一览
 
@@ -78,6 +82,7 @@ Electron 38 · React 19 · TypeScript · 零 native 依赖
 npm install          # 安装依赖
 npm run dev          # 开发模式（热更新）
 npm run build        # 构建产物
+npm run test         # 运行单元测试（vitest，165+ 用例，无需 Electron）
 npm run dist:win     # 打包 Windows 安装包（NSIS + 便携版）
 ```
 
@@ -222,6 +227,10 @@ Electron 38 · React 19 · TypeScript · zero native dependencies
 | 🔖 Bookmarks | `bm` | Reads local Chrome / Edge / Brave favorites with fuzzy search |
 | ✨ AI assistant | `ai <question>` | Any OpenAI-compatible endpoint (DeepSeek by default), answer shown in the detail panel |
 | ⚙️ Settings | `settings` or `Ctrl+,` | Every option editable through forms — no JSON editing |
+| 🪟 Windows Settings search | type directly / `winset` | 100+ deep links (Bluetooth, default apps, Device Manager…); covers ms-settings URIs, Control Panel & admin tools |
+| ⌨️ Command hotkeys | Settings → Command Hotkeys | Bind any search query to a global shortcut — press and it runs (Raycast-style Hotkeys) |
+| 🌐 Bilingual UI (ZH/EN) | Settings → General | UI, action names and provider titles switch instantly |
+| 🔄 Auto update | Settings → About | Backed by GitHub Releases, checks every 12h, one-click restart to install |
 
 ## 📸 Screenshots
 
@@ -258,6 +267,7 @@ Electron 38 · React 19 · TypeScript · zero native dependencies
 npm install          # install dependencies
 npm run dev          # dev mode with hot reload
 npm run build        # build artifacts
+npm run test         # run unit tests (vitest, 165+ cases, no Electron needed)
 npm run dist:win     # package the Windows installer (NSIS + portable)
 ```
 

@@ -22,6 +22,8 @@ export interface AppSettings {
   launchAtLogin: boolean
   /** 界面语言 */
   language: 'zh' | 'en'
+  /** 后台自动检查并下载更新 */
+  autoUpdate: boolean
   /** 主题 */
   theme: 'dark' | 'light'
   /** 单屏最多展示的结果条数 */
@@ -402,6 +404,12 @@ export interface LumenApi {
     info(): Promise<MachineInfo>
     relaunch(): Promise<void>
   }
+  updater: {
+    /** 手动检查更新，返回结果文案 */
+    check(): Promise<string>
+    /** 下载完成后重启并安装 */
+    install(): Promise<boolean>
+  }
   usage: {
     all(): Promise<UsageMap>
     record(key: string): Promise<void>
@@ -436,3 +444,4 @@ export type LumenEventChannel =
   | 'settings:changed'
   | 'index:status'
   | 'hotkey:trigger'
+  | 'update:status'

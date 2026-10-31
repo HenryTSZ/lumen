@@ -141,6 +141,13 @@ function rows(ctx: SearchContext): SettingRow[] {
               { key: 'launchAtLogin', label: '开机自动启动', type: 'toggle', defaultValue: String(s.launchAtLogin) },
               { key: 'showInTray', label: '托盘图标', type: 'toggle', defaultValue: String(s.showInTray) },
               {
+                key: 'autoUpdate',
+                label: t('后台自动更新', 'Auto Update in Background'),
+                type: 'toggle',
+                defaultValue: String(s.autoUpdate),
+                hint: t('每 12 小时检查 GitHub Releases，下载完成后提示重启安装', 'Checks GitHub Releases every 12h, prompts restart when ready')
+              },
+              {
                 key: 'resultLimit',
                 label: '单屏最多结果条数',
                 type: 'number',
@@ -172,6 +179,10 @@ function rows(ctx: SearchContext): SettingRow[] {
               if (bool(values.showInTray) !== s.showInTray) {
                 await api.settings.set('showInTray', bool(values.showInTray))
                 changes.push('托盘图标（重启生效）')
+              }
+              if (bool(values.autoUpdate) !== s.autoUpdate) {
+                await api.settings.set('autoUpdate', bool(values.autoUpdate))
+                changes.push(t(`自动更新${onOff(bool(values.autoUpdate))}`, `Auto update ${bool(values.autoUpdate) ? 'on' : 'off'}`))
               }
               const limit = Math.min(50, Math.max(1, Math.round(Number(values.resultLimit) || s.resultLimit)))
               if (limit !== s.resultLimit) {
@@ -662,20 +673,38 @@ function rows(ctx: SearchContext): SettingRow[] {
 
   out.push({
     id: 'about',
-    title: '关于 Lumen',
-    subtitle: '版本、数据目录与运行信息',
+    title: t('关于 Lumen', 'About Lumen'),
+    subtitle: t('版本、更新与运行信息', 'Version, updates & runtime info'),
     icon: 'ℹ️',
-    keywords: ['about', 'version', '关于'],
+    keywords: ['about', 'version', 'update', '关于', '更新'],
     actions: [
       {
-        id: 'detail',
-        name: '查看详细信息',
+        id: 'check-update',
+        name: t('检查更新', 'Check for Updates'),
         primary: true,
         shortcut: ['↵'],
+        async run({ toast }) {
+          const message = await api.updater.check()
+          toast(message)
+        }
+      },
+      {
+        id: 'install-update',
+        name: t('重启并安装新版本', 'Restart & Install Update'),
+        shortcut: ['Ctrl', 'U'],
+        icon: '⬆️',
+        async run({ toast }) {
+          const ok = await api.updater.install()
+          if (!ok) toast(t('新版本尚未下载完成，或当前已是最新', 'No downloaded update to install'))
+        }
+      },
+      {
+        id: 'detail',
+        name: t('查看详细信息', 'View Details'),
         async run() {
           const machine = await info()
           ctx.push({
-            title: '关于 Lumen',
+            title: t('关于 Lumen', 'About Lumen'),
             icon: emoji('ℹ️'),
             items: [
               {
@@ -686,10 +715,10 @@ function rows(ctx: SearchContext): SettingRow[] {
                 icon: emoji('ℹ️'),
                 detail: {
                   fields: [
-                    { label: '应用版本', value: machine.version },
-                    { label: '运行平台', value: machine.platform },
-                    { label: '数据目录', value: machine.dataDir },
-                    { label: '自定义命令', value: machine.commandsFile }
+                    { label: t('应用版本', 'Version'), value: machine.version },
+                    { label: t('运行平台', 'Platform'), value: machine.platform },
+                    { label: t('数据目录', 'Data Directory'), value: machine.dataDir },
+                    { label: t('自定义命令', 'Commands File'), value: machine.commandsFile }
                   ]
                 },
                 actions: []
@@ -700,7 +729,7 @@ function rows(ctx: SearchContext): SettingRow[] {
       },
       {
         id: 'relaunch',
-        name: '重启 Lumen',
+        name: t('重启 Lumen', 'Restart Lumen'),
         shortcut: ['Ctrl', 'Q'],
         icon: '🔄',
         async run() {

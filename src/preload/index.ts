@@ -127,6 +127,10 @@ const api: LumenApi = {
     info: () => invoke('app:machine'),
     relaunch: () => invoke('app:relaunch')
   },
+  updater: {
+    check: () => invoke('updater:check'),
+    install: () => invoke('updater:install')
+  },
 
   usage: {
     all: () => invoke('usage:all'),

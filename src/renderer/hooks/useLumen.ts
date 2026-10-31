@@ -77,9 +77,16 @@ export function useLumen() {
       setSelected(0)
       requestAnimationFrame(() => inputRef.current?.focus())
     })
+    // 新版本下载完成时提示用户重启更新
+    const offUpdate = api.on('update:status', (payload: { status: string; version?: string }) => {
+      if (payload?.status === 'downloaded') {
+        toastMessage(t(`新版本 ${payload.version ?? ''} 已就绪，可在 设置 → 关于 里重启安装`, `Version ${payload.version ?? ''} ready. Restart from Settings → About`))
+      }
+    })
     return () => {
       alive = false
       off()
+      offUpdate()
     }
   }, [])
 

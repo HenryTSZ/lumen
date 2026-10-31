@@ -1,6 +1,7 @@
 import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 import { store } from './store'
 import { registerIpcHandlers, broadcast, reapplyHotkeys } from './ipc'
+import { initUpdater } from './services/updater'
 import {
   applyAutoLaunch,
   createLauncherWindow,
@@ -46,6 +47,9 @@ function bootstrap(): void {
   void applications.scan().then(() => broadcast('index:status', files.indexStatus))
 
   registerGlobalHotkeys()
+
+  // 自动更新：打包后每 12 小时后台检查 GitHub Releases
+  initUpdater(broadcast)
 
   app.on('activate', () => showLauncher())
   // 所有窗口关闭时不退出：启动器需要常驻后台等待下一次唤起

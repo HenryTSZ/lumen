@@ -43,6 +43,7 @@ import { quicklinks, snippets } from './services/data'
 import { bookmarks } from './services/bookmarks'
 import { createLauncherWindow, getWindow, hideLauncher, registerWindowIpc, showLauncher, toggleLauncher } from './window'
 import { applyHotkeys } from './services/hotkeys'
+import { checkNow, installNow } from './services/updater'
 
 /**
  * （重新）注册所有全局快捷键：主唤起键 + 命令快捷键。
@@ -282,6 +283,10 @@ export function registerIpcHandlers(): void {
     quicklinksFile: join(store.dir, 'quicklinks.json'),
     snippetsFile: join(store.dir, 'snippets.json')
   }))
+
+  /* ---------------- 自动更新 ---------------- */
+  ipcMain.handle('updater:check', (): Promise<string> => checkNow())
+  ipcMain.handle('updater:install', (): Promise<boolean> => Promise.resolve(installNow()))
 }
 
 export function broadcast(channel: string, payload: unknown): void {
