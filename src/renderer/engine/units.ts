@@ -287,6 +287,11 @@ function findCurrency(token: string): string | null {
   return null
 }
 
+/** 判断一个词是不是已知单位或币种，用于决定「源单位」取自数字前还是数字后 */
+function isUnitToken(token: string): boolean {
+  return Boolean(findCurrency(token) || findCategory(token))
+}
+
 export interface UnitConversion {
   value: number
   fromLabel: string
@@ -333,8 +338,17 @@ export function convert(input: string): UnitConversion | null {
   const before = match[1].trim().split(/\s+/).filter(Boolean)
   const after = match[3].trim().split(/\s+/).filter(Boolean)
 
-  /* 单位在数字前（如 "$250 …"）取前面的词，否则取数字后第一个词 */
-  const source = before.length ? before[before.length - 1] : after.shift()
+  /*
+   * 单位可能在数字前（"$250 to cny" → usd），也可能在数字后（"100 km to mi" → km）。
+   * 先判断数字前的最后一个词是不是合法单位/币种：是就用它（货币符号场景），
+   * 否则说明它只是数字本身，退回取数字后的第一个词。
+   */
+  let source: string | undefined
+  if (before.length) {
+    const candidate = before[before.length - 1]
+    if (isUnitToken(candidate)) source = candidate
+  }
+  if (!source) source = after.shift()
   const target = after.length ? after[after.length - 1] : null
   if (!source || !target) return null
 

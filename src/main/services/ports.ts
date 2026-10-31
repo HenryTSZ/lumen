@@ -5,7 +5,7 @@ import type { PortEntry } from '@shared/types'
  * 端口占用查询：解析 `netstat -ano` 输出，再用 `tasklist` 把 PID 映射到进程名。
  * 全部走 Windows 自带命令，零依赖。
  */
-interface NetstatRow {
+export interface NetstatRow {
   proto: string
   local: string
   remote: string
@@ -22,7 +22,8 @@ function exec(cmd: string, args: string[], timeout = 8000): Promise<string> {
   })
 }
 
-function parseNetstat(out: string): NetstatRow[] {
+/** 解析 `netstat -ano` 的文本输出（导出以便单测覆盖） */
+export function parseNetstat(out: string): NetstatRow[] {
   const rows: NetstatRow[] = []
   for (const line of out.split(/\r?\n/)) {
     const cols = line.trim().split(/\s+/)
@@ -36,19 +37,25 @@ function parseNetstat(out: string): NetstatRow[] {
   return rows
 }
 
-/** tasklist CSV → pid → 进程名 */
-async function pidNameMap(): Promise<Map<number, string>> {
+/** 解析 `tasklist /fo csv /nh` 的输出（导出以便单测覆盖） */
+export function parseTasklistCsv(csv: string): Map<number, string> {
   const map = new Map<number, string>()
-  try {
-    const csv = await exec('tasklist', ['/fo', 'csv', '/nh'])
-    for (const line of csv.split(/\r?\n/)) {
-      const m = line.match(/^"([^"]+)","(\d+)/)
-      if (m) map.set(Number(m[2]), m[1].replace(/\.exe$/i, ''))
-    }
-  } catch {
-    /* 拿不到进程名也不影响展示端口 */
+  for (const line of csv.split(/\r?\n/)) {
+    const m = line.match(/^"([^"]+)","(\d+)/)
+    if (m) map.set(Number(m[2]), m[1].replace(/\.exe$/i, ''))
   }
   return map
+}
+
+/** tasklist CSV → pid → 进程名 */
+async function pidNameMap(): Promise<Map<number, string>> {
+  try {
+    const csv = await exec('tasklist', ['/fo', 'csv', '/nh'])
+    return parseTasklistCsv(csv)
+  } catch {
+    /* 拿不到进程名也不影响展示端口 */
+    return new Map()
+  }
 }
 
 export async function listPorts(): Promise<PortEntry[]> {

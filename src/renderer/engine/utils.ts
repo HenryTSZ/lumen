@@ -19,7 +19,9 @@ export function formatBytes(bytes: number): string {
     value /= 1024
     unit++
   }
-  return `${value >= 100 || unit === 0 ? Math.round(value) : value.toFixed(1)} ${units[unit]}`
+  // 个位也保留一位小数，但要去掉 ".0" 这种尾差，避免出现 "1.0 KB"
+  const shown = value >= 100 || unit === 0 ? Math.round(value) : Number(value.toFixed(1))
+  return `${shown} ${units[unit]}`
 }
 
 /** 把大数按可读性分组，如 1234567 → 1,234,567 */
@@ -31,7 +33,9 @@ export function groupDigits(input: string): string {
 
 export function dirname(path: string): string {
   const idx = Math.max(path.lastIndexOf('\\'), path.lastIndexOf('/'))
-  return idx > 0 ? path.slice(0, idx) : path
+  // 没有分隔符时说明没有目录，返回空串而不是把文件名当目录
+  if (idx > 0) return path.slice(0, idx)
+  return idx === 0 ? path.slice(0, 1) : ''
 }
 
 export function basename(path: string): string {

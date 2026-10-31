@@ -7,6 +7,9 @@ dist/
 release/
 *.tsbuildinfo
 
+# 测试覆盖率报告
+coverage/
+
 # Electron 打包缓存
 builder-debug.yml
 

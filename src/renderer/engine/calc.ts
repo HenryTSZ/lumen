@@ -241,7 +241,7 @@ function toRpn(tokens: Token[]): Token[] {
 }
 
 /** 函数的参数个数，未列出的按一元处理 */
-const ARITY: Record<string, number> = { max: 2, min: 2, gcd: 2 }
+const ARITY: Record<string, number> = { max: 2, min: 2, gcd: 2, pow: 2 }
 
 function evaluateRpn(tokens: Token[]): number {
   const stack: number[] = []
@@ -323,9 +323,12 @@ function formatNumber(value: number): string {
 function buildExtras(value: number): Array<[string, string]> {
   const extras: Array<[string, string]> = []
   if (Number.isInteger(value) && Math.abs(value) < 2 ** 32) {
-    extras.push(['十六进制', `0x${value.toString(16).toUpperCase()}`])
-    extras.push(['二进制', `0b${value.toString(2)}`])
-    if (value >= 0) extras.push(['八进制', `0o${value.toString(8)}`])
+    // 负数不能直接 toString(16)，否则会出现 "0x-3" 这种写法
+    const sign = value < 0 ? '-' : ''
+    const abs = Math.abs(value)
+    extras.push(['十六进制', `${sign}0x${abs.toString(16).toUpperCase()}`])
+    extras.push(['二进制', `${sign}0b${abs.toString(2)}`])
+    extras.push(['八进制', `${sign}0o${abs.toString(8)}`])
   }
   if (Math.abs(value) >= 1000) {
     extras.push(['千分位', value.toLocaleString('en-US')])
