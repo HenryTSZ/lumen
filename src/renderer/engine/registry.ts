@@ -17,6 +17,7 @@ import { wifiProvider } from './providers/wifi'
 import { pluginStoreProvider } from './providers/pluginStore'
 import { aiProvider } from './providers/ai'
 import { settingsProvider } from './providers/settings'
+import { windowsSettingsProvider } from './providers/windowsSettings'
 
 /** 所有内置扩展，按默认展示顺序排列 */
 export const BUILTIN_PROVIDERS: Provider[] = [
@@ -25,6 +26,7 @@ export const BUILTIN_PROVIDERS: Provider[] = [
   clipboardProvider,
   windowSwitcherProvider,
   userCommandsProvider,
+  windowsSettingsProvider,
   quicklinksProvider,
   snippetsProvider,
   emojiProvider,

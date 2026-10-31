@@ -358,6 +358,8 @@ export interface LumenApi {
         | 'env'
         | 'publicIp'
     ): Promise<string>
+    /** 打开系统入口：ms-settings: URI、.cpl、.msc 或可执行名 */
+    open(target: string): Promise<string>
   }
   commands: {
     list(): Promise<UserCommand[]>

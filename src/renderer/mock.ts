@@ -378,7 +378,8 @@ export function createMockApi(): LumenApi {
       keys: async () => [...pluginStore.keys()]
     },
     system: {
-      run: async () => '完成'
+      run: async () => '完成',
+      open: async () => ''
     },
     commands: {
       list: async () => deep(userCmd),

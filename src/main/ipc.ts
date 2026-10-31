@@ -23,7 +23,7 @@ import { applications } from './services/applications'
 import { clipboardService } from './services/clipboard'
 import { files } from './services/files'
 import { closeWindow, focusWindow, listWindows, sendPaste, snapWindow } from './services/windows'
-import { runSystemAction } from './services/system'
+import { openSystemTarget, runSystemAction } from './services/system'
 import { listPorts } from './services/ports'
 import { killProcess, listProcesses } from './services/processes'
 import { listWifi } from './services/wifi'
@@ -166,6 +166,12 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('system:run', (_e, action: SystemAction) => {
     if (action !== 'publicIp') hideLauncher()
     return runSystemAction(action)
+  })
+
+  /* Windows 设置 URI / 控制面板 / 管理工具 */
+  ipcMain.handle('system:open', (_e, target: string): Promise<string> => {
+    hideLauncher()
+    return openSystemTarget(target)
   })
 
   /* ---------------- 用户扩展命令 ---------------- */

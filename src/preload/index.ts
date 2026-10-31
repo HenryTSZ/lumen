@@ -91,7 +91,8 @@ const api: LumenApi = {
   },
 
   system: {
-    run: (action) => invoke('system:run', action)
+    run: (action) => invoke('system:run', action),
+    open: (target) => invoke('system:open', target)
   },
 
   commands: {

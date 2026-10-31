@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process'
+import { shell } from 'electron'
 import type { SystemAction } from '@shared/types'
 import { powershell } from '../util/powershell'
 
@@ -36,6 +37,23 @@ export function runSystemAction(action: SystemAction): Promise<string> {
     default:
       return Promise.resolve('未知操作')
   }
+}
+
+const URI_RE = /^[a-z][a-z0-9+.-]*:/i
+
+/**
+ * 打开一个系统入口：
+ *   - `ms-settings:*` 这类 URI 交给 ShellExecute（shell.openExternal）
+ *   - `.cpl` / `.msc` / 可执行名交给 cmd 的 start（控制面板、设备管理器等管理工具）
+ */
+export async function openSystemTarget(target: string): Promise<string> {
+  const value = target.trim()
+  if (!value) return ''
+  if (URI_RE.test(value) && !/^[a-z]:[\\/]/i.test(value)) {
+    await shell.openExternal(value)
+    return ''
+  }
+  return run('cmd.exe', ['/c', 'start', '', value])
 }
 
 function run(file: string, args: string[]): Promise<string> {
