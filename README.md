@@ -10,6 +10,8 @@ Electron 38 · React 19 · TypeScript · 零 native 依赖
 
 [在线体验 →](https://HenryTSZ.github.io/lumen/) · [下载发行版 →](https://github.com/HenryTSZ/lumen/releases)
 
+> 中文 / [English ↓](#english)
+
 </div>
 
 ![Lumen 主界面](docs/images/01-root.png)
@@ -181,6 +183,187 @@ module.exports = {
 - **想要全盘毫秒级文件搜索？** 安装 [Everything](https://www.voidtools.com/) 并把 `es.exe` 路径填进设置，文件搜索会自动切换到 Everything。
 - **Windows 10 没有毛玻璃？** 窗口使用 Windows 11 的 Acrylic 材质，Win10 自动回落到半透明 + 渲染层模糊。
 - **AI 不工作？** 在设置里启用 AI 并填入 API Key（任何 OpenAI 兼容接口均可，如 DeepSeek）。
+
+---
+
+<a id="english"></a>
+
+# Lumen (English)
+
+**A Raycast-style productivity launcher for Windows**
+
+Electron 38 · React 19 · TypeScript · zero native dependencies
+
+[Try it online →](https://henrytsz.github.io/lumen/) · [Download →](https://github.com/HenryTSZ/lumen/releases)
+
+![Main window](docs/images/01-root.png)
+
+## ✨ Features
+
+| Feature | Trigger | Notes |
+|---|---|---|
+| 🚀 Apps | type directly / `app` | Start Menu + registry + UWP, real system icons, run as admin |
+| 🧮 Calculator | expression / `=` | Shunting-yard evaluator with `sin/cos/sqrt/log/!`, bases and thousands separators |
+| 🔄 Unit & currency | e.g. `100km to mi` | 11 unit families + 22 currencies; Chinese phrasing such as `$250 换 人民币` or `1GB=?MB` works |
+| 🧠 Adaptive ranking | automatic | Frequency + recency decide the order; pin anything manually |
+| 📂 File search | `f <query>` | Built-in incremental index, optional Everything backend for whole-disk speed |
+| 🌐 Web search | `s <query>` / paste a URL | Switchable between Google / Bing / Baidu / DuckDuckGo |
+| 📋 Clipboard history | `clip` | Text, **images** and files — images get thumbnails, a full preview and save-as-PNG |
+| 🧩 Plugin store | `store` | Install / uninstall / enable / disable extensions, 5 plugins included, custom index supported |
+| 🪟 Window switcher | `w <query>` | Enumerates visible windows and focuses them reliably; every result carries **left/right half, maximize, center, next-display** actions |
+| 🔌 Port inspector | `port 3000` | netstat parsing — see which process holds a port and kill it |
+| ⚙️ Process manager | `kill <name>` | Processes sorted by memory, fuzzy filter, one-key force kill |
+| 📶 Wi-Fi networks | `wifi` | Nearby networks with signal strength, auth type and the current connection marked |
+| ⚡ System commands | `sys` | Lock / sleep / hibernate / shutdown / restart / empty recycle bin / public IP |
+| 🧩 Custom commands | `ext` | Extend by editing `commands.json`, no code required |
+| 🔗 Quicklinks | `ql` | Site search templates (GitHub, MDN, Bilibili…); `gh react` jumps straight there; `{query}` / `{Query}` placeholders |
+| ✏️ Snippets | `snip` | Reusable text with `{clipboard}` `{date}` `{time}` `{arg}` `{cursor}`; Enter pastes into the frontmost window |
+| 😀 Emoji picker | `emoji` | 1,898 emoji offline, searchable in Chinese, English or pinyin; Enter pastes |
+| 🔖 Bookmarks | `bm` | Reads local Chrome / Edge / Brave favorites with fuzzy search |
+| ✨ AI assistant | `ai <question>` | Any OpenAI-compatible endpoint (DeepSeek by default), answer shown in the detail panel |
+| ⚙️ Settings | `settings` or `Ctrl+,` | Every option editable through forms — no JSON editing |
+
+## 📸 Screenshots
+
+<table>
+<tr>
+<td><img src="docs/images/02-currency.png" alt="Unit and currency conversion" /></td>
+<td><img src="docs/images/03-plugin-store.png" alt="Plugin store" /></td>
+</tr>
+<tr>
+<td><img src="docs/images/04-clipboard-image.png" alt="Clipboard images" /></td>
+<td><img src="docs/images/06-window-snap.png" alt="Window snapping" /></td>
+</tr>
+</table>
+
+> Every screenshot above comes from `docs/index.html`, the single-file browser preview shipped in this repo — the whole UI is playable without installing anything.
+
+## ⌨️ Shortcuts
+
+| Key | Action |
+|---|---|
+| `Alt+Space` (configurable) | Toggle the launcher |
+| `↑` `↓` / `Ctrl+N` `Ctrl+P` | Move selection |
+| `Enter` | Run the primary action |
+| `Ctrl+1..9` | Run the Nth action |
+| `Ctrl+K` | Open the action panel |
+| `Tab` / `Ctrl+D` | Toggle the detail panel |
+| `Ctrl+I` | AI assistant |
+| `Ctrl+,` | Settings |
+| `Esc` | Clear input → go back → hide window |
+
+## 🏃 Quick start
+
+```bash
+npm install          # install dependencies
+npm run dev          # dev mode with hot reload
+npm run build        # build artifacts
+npm run dist:win     # package the Windows installer (NSIS + portable)
+```
+
+> Building the installer requires Windows (electron-builder cannot cross-build NSIS on Linux).
+> Output goes to `dist/Lumen-Setup-x.y.z.exe` and `dist/Lumen-x.y.z-portable.exe`.
+
+## 🏗️ Architecture
+
+```
+src/
+├─ main/                     # Electron main process
+│  ├─ index.ts               # lifecycle / global hotkey / single-instance lock
+│  ├─ window.ts              # frameless acrylic window / tray / dynamic sizing
+│  ├─ ipc.ts                 # every IPC handler
+│  ├─ store.ts               # settings.json persistence
+│  ├─ util/powershell.ts     # PowerShell runner (UTF-8 fixes)
+│  └─ services/
+│     ├─ applications.ts     # Start Menu + registry + UWP scan
+│     ├─ files.ts            # file index / Everything integration
+│     ├─ clipboard.ts        # clipboard history (text + images)
+│     ├─ windows.ts          # window enumeration and focus (user32 P/Invoke)
+│     ├─ system.ts           # system-level commands
+│     └─ commands.ts         # user-defined command loader
+├─ preload/index.ts          # contextBridge bridge
+├─ shared/types.ts           # types shared by all three processes
+└─ renderer/                 # React UI
+   ├─ engine/
+   │  ├─ registry.ts         # provider registry and trigger resolution
+   │  ├─ fuzzy.ts            # fuzzy matching (pinyin initials included)
+   │  ├─ calc.ts             # expression evaluator
+   │  └─ providers/          # one provider per feature
+   ├─ hooks/useLumen.ts      # core state machine (nav stack / search / actions)
+   └─ components/            # UI components
+```
+
+**Design notes**
+
+- The main process only talks to the system (scan, index, execute); all provider logic runs in the renderer — the same extension-first architecture Raycast uses. Adding a feature means dropping a provider file into `providers/` and registering it in `registry.ts`.
+- Every system call goes through PowerShell + user32 P/Invoke, so there is **no native addon** and zero compilation in the build.
+- The renderer ships with a mock layer (`renderer/mock.ts`): without Electron it degrades gracefully, so the UI can be developed and debugged straight in a browser.
+
+## 🧩 Custom commands
+
+Edit `%APPDATA%/lumen/commands.json`:
+
+```json
+[
+  { "name": "Open Cursor", "keyword": "cur", "type": "open", "target": "C:\\...\\Cursor.exe", "icon": "🖥️" },
+  { "name": "Restart build", "keyword": "build", "type": "shell", "target": "npm run build", "cwd": "D:\\proj", "icon": "🔨" },
+  { "name": "Paste email", "keyword": "mail", "type": "snippet", "target": "me@example.com", "icon": "✉️" },
+  { "name": "GitHub Trending", "keyword": "gh", "type": "url", "target": "https://github.com/trending", "icon": "🌐" }
+]
+```
+
+Then click "Reload command file" in Settings.
+
+## 🛍️ Writing a plugin
+
+A plugin is a directory (`plugin.json` + an entry JS file) placed in `%APPDATA%/lumen/plugins/<id>/`; it loads at startup. To share it, publish the directory and point a market index at it.
+
+**plugin.json**
+
+```json
+{
+  "id": "my-plugin",
+  "name": "My Plugin",
+  "version": "1.0.0",
+  "author": "You",
+  "description": "One-line summary",
+  "icon": "🧩",
+  "aliases": ["my", "mine"],
+  "participatesInRoot": false,
+  "rank": 60,
+  "main": "index.js"
+}
+```
+
+**index.js** (CommonJS, exports `search`)
+
+```js
+module.exports = {
+  icon: '🧩',
+  async search(ctx) {
+    // ctx.args is what follows the trigger; ctx.api is the system surface;
+    // ctx.toast shows a hint; ctx.close hides the window; ctx.refresh re-runs the search
+    return [
+      {
+        id: 'demo',
+        title: `Hello, ${ctx.args || 'world'}`,
+        subtitle: 'First result from the plugin',
+        icon: '👋',
+        actions: [{ id: 'copy', name: 'Copy', icon: '📋', run: () => ctx.api.clipboard.write(ctx.args) }]
+      }
+    ]
+  }
+}
+```
+
+Plugins run in a **sandboxed environment**: no Node, no filesystem — only what `ctx.api` exposes. Persist state with `ctx.api.storage.get/set` (stored in `plugin-store.json`). `resources/plugins/` holds 5 complete examples (JSON toolkit, Base64, random generator, color converter, lightweight todos).
+
+## 🔧 FAQ
+
+- **Alt+Space already taken?** The main process falls back through candidates like `Ctrl+Space`; you can also pick one manually in Settings.
+- **Want instant whole-disk file search?** Install [Everything](https://www.voidtools.com/) and set the `es.exe` path in Settings — file search switches to it automatically.
+- **No acrylic on Windows 10?** The window uses the Windows 11 Acrylic material; Windows 10 falls back to translucency plus renderer-side blur.
+- **AI not working?** Enable AI in Settings and fill in an API key (any OpenAI-compatible endpoint works, DeepSeek included).
 
 ## 📄 License
 
