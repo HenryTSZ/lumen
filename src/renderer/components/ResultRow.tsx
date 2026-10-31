@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { ResultItem } from '../engine/types'
 import { IconView } from './Icon'
+import { tAction } from '../i18n'
 
 interface Props {
   item: ResultItem
@@ -60,14 +61,14 @@ export function ResultRow({
             <button
               key={action.id}
               className="chip"
-              title={`${action.name}${action.shortcut ? ` (${action.shortcut.join('+')})` : ''}`}
+              title={`${tAction(action.name)}${action.shortcut ? ` (${action.shortcut.join('+')})` : ''}`}
               onClick={(event) => {
                 event.stopPropagation()
                 onRun(item.actions.indexOf(action))
               }}
             >
               {action.icon ? <span className="chip-icon">{action.icon}</span> : null}
-              <span>{action.shortcut?.join(' ') || action.name}</span>
+              <span>{action.shortcut?.join(' ') || tAction(action.name)}</span>
             </button>
           ))}
         </div>

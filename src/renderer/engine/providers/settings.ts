@@ -1,6 +1,7 @@
 import { api } from '../../api'
 import type { AppSettings, HotkeyBinding } from '@shared/types'
 import { findHotkeyConflicts, isValidAccelerator, normalizeAccelerator } from '@shared/hotkeys'
+import { t } from '../../i18n'
 import { emoji, type ActionSpec, type FormSpec, type Provider, type ResultItem, type SearchContext } from '../types'
 
 const HOTKEY_CANDIDATES = ['Alt+Space', 'Ctrl+Space', 'Alt+S', 'Ctrl+Alt+Space', 'Alt+Q', 'Ctrl+;']
@@ -115,6 +116,14 @@ function rows(ctx: SearchContext): SettingRow[] {
             submitLabel: '保存通用设置',
             fields: [
               {
+                key: 'language',
+                label: t('界面语言', 'Language'),
+                type: 'select',
+                options: ['中文', 'English'],
+                defaultValue: s.language === 'en' ? 'English' : '中文',
+                hint: t('切换后立即生效', 'Takes effect immediately')
+              },
+              {
                 key: 'hotkey',
                 label: '全局唤起快捷键',
                 type: 'select',
@@ -141,6 +150,11 @@ function rows(ctx: SearchContext): SettingRow[] {
             ],
             async submit(values) {
               const changes: string[] = []
+              const language = values.language === 'English' ? 'en' : 'zh'
+              if (language !== s.language) {
+                await api.settings.set('language', language)
+                changes.push(language === 'zh' ? '中文界面' : 'English')
+              }
               const hotkey = values.hotkey.trim()
               if (hotkey && hotkey !== s.hotkey) {
                 const applied = await api.settings.setHotkey(hotkey)

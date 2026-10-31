@@ -1,5 +1,6 @@
 import type { ResultItem } from '../engine/types'
 import { IconView } from './Icon'
+import { t, tAction } from '../i18n'
 
 interface Props {
   item: ResultItem | null
@@ -17,7 +18,7 @@ export function ActionPanel({ item, open, onClose, onRun }: Props) {
       <div className="action-head">
         <IconView icon={item.icon} size={24} />
         <div className="action-head-title">{item.title}</div>
-        <button className="ghost-btn" onClick={onClose} title="关闭（Esc）">
+        <button className="ghost-btn" onClick={onClose} title={t('关闭（Esc）', 'Close (Esc)')}>
           ✕
         </button>
       </div>
@@ -25,7 +26,7 @@ export function ActionPanel({ item, open, onClose, onRun }: Props) {
         {item.actions.map((action, index) => (
           <button key={action.id} className="action-item" onClick={() => onRun(index)}>
             <span className="action-icon">{action.icon ?? '▸'}</span>
-            <span className="action-name">{action.name}</span>
+            <span className="action-name">{tAction(action.name)}</span>
             {action.shortcut?.length ? (
               <span className="action-keys">
                 {action.shortcut.map((key, i) => (
@@ -39,7 +40,9 @@ export function ActionPanel({ item, open, onClose, onRun }: Props) {
             ) : null}
           </button>
         ))}
-        {!item.actions.length ? <div className="action-empty">该项目没有可执行的操作</div> : null}
+        {!item.actions.length ? (
+          <div className="action-empty">{t('该项目没有可执行的操作', 'No actions available')}</div>
+        ) : null}
       </div>
     </div>
   )

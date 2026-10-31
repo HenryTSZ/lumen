@@ -7,6 +7,8 @@ import { loadPlugins } from '../engine/pluginRuntime'
 import type { Group, Screen } from '../engine/types.internal'
 import type { FormSpec, IconSpec, PushOptions, ResultItem, SearchContext } from '../engine/types'
 import { loadUsage, recordUsage, usageBoost } from '../engine/usage'
+import { localeFromSettings, setLocale, t } from '../i18n'
+import { providerLabel } from '../engine/providerLabels'
 
 const ROOT_TITLE = 'Lumen'
 const MAX_ROOT_PER_GROUP = 4
@@ -30,6 +32,8 @@ function debounceFor(input: string): number {
 
 export function useLumen() {
   const [settings, setSettings] = useState<AppSettings | null>(null)
+  // 语言要在渲染前同步好，t() 才能取到当次渲染的文案
+  setLocale(localeFromSettings(settings))
   const [query, setQuery] = useState('')
   const [stack, setStack] = useState<Screen[]>([])
   const [loading, setLoading] = useState(false)
@@ -208,7 +212,7 @@ export function useLumen() {
             toScreen({
               kind: 'search',
               providerId: provider.id,
-              title: provider.name,
+              title: providerLabel(provider).name,
               icon: provider.icon,
               items,
               loading: false
@@ -237,7 +241,7 @@ export function useLumen() {
           .sort((a, b) => a.entry.rank - b.entry.rank)) {
           groups.push({
             providerId: entry.id,
-            name: entry.name,
+            name: providerLabel(entry).name,
             icon: entry.icon,
             items: items
           })
@@ -246,19 +250,19 @@ export function useLumen() {
         if (!input.trim()) {
           groups.push({
             providerId: 'entries',
-            name: '所有功能',
+            name: t('所有功能', 'All Extensions'),
             icon: { kind: 'emoji', value: '🧩' } satisfies IconSpec,
             items: PROVIDERS.filter((p) => p.entry).map((p) => ({
               id: `entry:${p.id}`,
               providerId: p.id,
-              title: p.name,
-              subtitle: p.description,
+              title: providerLabel(p).name,
+              subtitle: providerLabel(p).description,
               icon: p.icon,
               usageKey: `entry:${p.id}`,
               actions: [
                 {
                   id: 'enter',
-                  name: '进入',
+                  name: t('进入', 'Enter'),
                   primary: true,
                   shortcut: ['↵'],
                   run: () => setQuery(`${p.aliases[0]} `)

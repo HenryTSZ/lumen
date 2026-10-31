@@ -9,6 +9,7 @@ import { FormPanel } from './components/FormPanel'
 import { ActionPanel } from './components/ActionPanel'
 import { DetailPanel } from './components/DetailPanel'
 import { Toast } from './components/Toast'
+import { t, tAction } from './i18n'
 
 const BASE_WIDTH = 780
 const DETAIL_WIDTH = 1140
@@ -197,7 +198,7 @@ export default function App() {
               selected={selected}
               showAccessory={!showDetail}
               emptyHint={
-                lumen.loading ? '正在搜索…' : undefined
+                lumen.loading ? t('正在搜索…', 'Searching…') : undefined
               }
               onSelect={lumen.setSelected}
               onRun={(index) => void runAction(selectedItem, index)}
@@ -221,7 +222,7 @@ export default function App() {
           <span className="dot" />
           {footerLeft}
           <span className="footer-sep">·</span>
-          {form ? `${form.fields.length} 个字段` : `${flatItems.length} 项`}
+          {form ? t(`${form.fields.length} 个字段`, `${form.fields.length} fields`) : t(`${flatItems.length} 项`, `${flatItems.length} items`)}
         </div>
         {form ? <FormFooter /> : <ListFooter primaryHint={primaryHint} />}
       </footer>
@@ -236,10 +237,10 @@ function FormFooter() {
     <div className="footer-right">
       <kbd>Ctrl</kbd>
       <kbd>↵</kbd>
-      <span>保存</span>
+      <span>{t('保存', 'Save')}</span>
       <span className="footer-sep">·</span>
       <kbd>Esc</kbd>
-      <span>返回</span>
+      <span>{t('返回', 'Back')}</span>
     </div>
   )
 }
@@ -250,16 +251,16 @@ function ListFooter({ primaryHint }: { primaryHint?: ActionSpec }) {
       {primaryHint ? (
         <>
           <kbd>↵</kbd>
-          <span>{primaryHint.name}</span>
+          <span>{tAction(primaryHint.name)}</span>
           <span className="footer-sep">·</span>
         </>
       ) : null}
       <kbd>Ctrl</kbd>
       <kbd>K</kbd>
-      <span>操作</span>
+      <span>{t('操作', 'Actions')}</span>
       <span className="footer-sep">·</span>
       <kbd>Tab</kbd>
-      <span>详情</span>
+      <span>{t('详情', 'Details')}</span>
     </div>
   )
 }

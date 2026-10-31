@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react'
 import type { FormField, FormSpec } from '../engine/types'
+import { t } from '../i18n'
 
 interface Props {
   form: FormSpec
@@ -83,10 +84,10 @@ export function FormPanel({ form, onSubmitted, onCancel, panelRef }: Props) {
 
       <div className="form-actions">
         <button className="form-btn ghost" type="button" onClick={onCancel}>
-          取消
+          {t('取消', 'Cancel')}
         </button>
         <button className="form-btn primary" type="button" disabled={busy} onClick={() => void submit()}>
-          {busy ? '保存中…' : form.submitLabel ?? '保存'}
+          {busy ? t('保存中…', 'Saving…') : form.submitLabel ?? t('保存', 'Save')}
         </button>
         <span className="form-keys">
           <kbd>Ctrl</kbd>
@@ -121,7 +122,7 @@ function Field({ field, value, inputRef, onChange }: FieldProps) {
         <span className="switch-track">
           <span className="switch-knob" />
         </span>
-        <span className="switch-text">{on ? '已开启' : '已关闭'}</span>
+        <span className="switch-text">{on ? t('已开启', 'On') : t('已关闭', 'Off')}</span>
       </button>
     )
   }

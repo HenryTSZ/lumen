@@ -7,6 +7,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hotkey: 'Alt+Space',
   showInTray: true,
   launchAtLogin: false,
+  language: 'zh',
   theme: 'dark',
   resultLimit: 60,
   everythingPath: '',

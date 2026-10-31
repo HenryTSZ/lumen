@@ -20,6 +20,8 @@ export interface AppSettings {
   showInTray: boolean
   /** 开机自启 */
   launchAtLogin: boolean
+  /** 界面语言 */
+  language: 'zh' | 'en'
   /** 主题 */
   theme: 'dark' | 'light'
   /** 单屏最多展示的结果条数 */

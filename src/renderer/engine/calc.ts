@@ -3,6 +3,7 @@
  * 支持：+ - * / ^ % 括号、科学函数、常量 pi/e/φ、阶乘 !、千分位分隔符写法。
  * 不引入 mathjs 一类的重依赖，保证启动器冷启动体积和速度。
  */
+import { t } from '../i18n'
 
 const CONSTANTS: Record<string, number> = {
   pi: Math.PI,
@@ -326,13 +327,13 @@ function buildExtras(value: number): Array<[string, string]> {
     // 负数不能直接 toString(16)，否则会出现 "0x-3" 这种写法
     const sign = value < 0 ? '-' : ''
     const abs = Math.abs(value)
-    extras.push(['十六进制', `${sign}0x${abs.toString(16).toUpperCase()}`])
-    extras.push(['二进制', `${sign}0b${abs.toString(2)}`])
-    extras.push(['八进制', `${sign}0o${abs.toString(8)}`])
+    extras.push([t('十六进制', 'Hex'), `${sign}0x${abs.toString(16).toUpperCase()}`])
+    extras.push([t('二进制', 'Binary'), `${sign}0b${abs.toString(2)}`])
+    extras.push([t('八进制', 'Octal'), `${sign}0o${abs.toString(8)}`])
   }
   if (Math.abs(value) >= 1000) {
-    extras.push(['千分位', value.toLocaleString('en-US')])
-    if (value > 0) extras.push(['税率 13%', String(Number((value * 1.13).toFixed(2)))])
+    extras.push([t('千分位', 'Thousands'), value.toLocaleString('en-US')])
+    if (value > 0) extras.push([t('税率 13%', 'Plus 13% tax'), String(Number((value * 1.13).toFixed(2)))])
   }
   return extras
 }

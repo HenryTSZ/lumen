@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import type { Group } from '../engine/types.internal'
 import type { ResultItem } from '../engine/types'
 import { ResultRow } from './ResultRow'
+import { t } from '../i18n'
+import { providerName } from '../engine/providerLabels'
 
 interface Props {
   groups: Group[]
@@ -25,8 +27,10 @@ export function ResultList({ groups, selected, showAccessory, emptyHint, onSelec
   if (!visible.length) {
     return (
       <div className="empty">
-        <div className="empty-title">没有找到结果</div>
-        <div className="empty-subtitle">{emptyHint ?? '换个关键词，或按 Esc 关闭'}</div>
+        <div className="empty-title">{t('没有找到结果', 'No results found')}</div>
+        <div className="empty-subtitle">
+          {emptyHint ?? t('换个关键词，或按 Esc 关闭', 'Try another keyword, or press Esc to close')}
+        </div>
       </div>
     )
   }
@@ -40,7 +44,7 @@ export function ResultList({ groups, selected, showAccessory, emptyHint, onSelec
         offset += group.items.length
         return (
           <section className="group" key={group.providerId}>
-            <header className="group-header">{group.name}</header>
+            <header className="group-header">{providerName(group.providerId, group.name)}</header>
             <div className="group-items">
               {group.items.map((item: ResultItem, index: number) => (
                 <ResultRow

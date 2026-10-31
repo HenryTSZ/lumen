@@ -3,6 +3,7 @@ import { api } from '../../api'
 import { copyAction } from '../helpers'
 import { rankBy } from '../fuzzy'
 import { emoji, type Provider, type ResultItem, type SearchContext } from '../types'
+import { isEnglish, t } from '../../i18n'
 
 /**
  * Windows 设置搜索。
@@ -10,12 +11,17 @@ import { emoji, type Provider, type ResultItem, type SearchContext } from '../ty
  * 不用再点开开始菜单 → 设置 → 一层层翻。
  */
 
+function titleOf(entry: WinSetting): string {
+  return isEnglish() ? entry.titleEn : entry.title
+}
+
 function iconFor(entry: WinSetting): string {
   return entry.icon ?? winSettingGroup(entry.group).icon
 }
 
 function subtitleFor(entry: WinSetting): string {
-  return `${winSettingGroup(entry.group).title} · ${entry.target}`
+  const group = winSettingGroup(entry.group)
+  return `${isEnglish() ? group.titleEn : group.title} · ${entry.target}`
 }
 
 function build(entry: WinSetting, ctx: SearchContext, score: number, ranges?: Array<[number, number]>): ResultItem {
@@ -23,7 +29,7 @@ function build(entry: WinSetting, ctx: SearchContext, score: number, ranges?: Ar
   return {
     id: `winset:${entry.target}`,
     providerId: 'windows-settings',
-    title: entry.title,
+    title: titleOf(entry),
     subtitle: subtitleFor(entry),
     icon: emoji(iconFor(entry)),
     keywords: [entry.titleEn, ...entry.keys, group.title, group.titleEn, entry.target],
@@ -33,17 +39,17 @@ function build(entry: WinSetting, ctx: SearchContext, score: number, ranges?: Ar
     detail: {
       hero: emoji(iconFor(entry)),
       fields: [
-        { label: '名称', value: entry.title },
+        { label: t('名称', 'Name'), value: titleOf(entry) },
         { label: 'English', value: entry.titleEn },
-        { label: '分组', value: group.title },
-        { label: '打开方式', value: entry.target }
+        { label: t('分组', 'Group'), value: isEnglish() ? group.titleEn : group.title },
+        { label: t('打开方式', 'Opens'), value: entry.target }
       ],
-      footer: '回车直接打开系统设置页 · Ctrl+C 复制命令'
+      footer: t('回车直接打开系统设置页 · Ctrl+C 复制命令', 'Enter opens the settings page · Ctrl+C copies the command')
     },
     actions: [
       {
         id: 'open',
-        name: `打开${entry.title}`,
+        name: t(`打开${titleOf(entry)}`, `Open ${titleOf(entry)}`),
         primary: true,
         shortcut: ['↵'],
         icon: iconFor(entry),
@@ -81,10 +87,10 @@ export const windowsSettingsProvider: Provider = {
     }
 
     return rankBy(WIN_SETTINGS, query, (entry) => [
-      entry.title,
-      entry.titleEn,
+      titleOf(entry),
+      isEnglish() ? entry.title : entry.titleEn,
       entry.keys.join(' '),
-      winSettingGroup(entry.group).title,
+      isEnglish() ? winSettingGroup(entry.group).titleEn : winSettingGroup(entry.group).title,
       entry.target
     ])
       .slice(0, limit)
