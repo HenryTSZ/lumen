@@ -39,6 +39,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   pluginsIndexUrl: '',
   disabledPlugins: [],
   allowRemotePlugins: true,
+  commandHotkeys: [],
   firstRun: true
 }
 

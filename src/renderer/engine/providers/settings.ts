@@ -1,5 +1,6 @@
 import { api } from '../../api'
-import type { AppSettings } from '@shared/types'
+import type { AppSettings, HotkeyBinding } from '@shared/types'
+import { findHotkeyConflicts, isValidAccelerator, normalizeAccelerator } from '@shared/hotkeys'
 import { emoji, type ActionSpec, type FormSpec, type Provider, type ResultItem, type SearchContext } from '../types'
 
 const HOTKEY_CANDIDATES = ['Alt+Space', 'Ctrl+Space', 'Alt+S', 'Ctrl+Alt+Space', 'Alt+Q', 'Ctrl+;']
@@ -39,6 +40,55 @@ interface SettingRow {
   icon: string
   keywords?: string[]
   actions: ResultItem['actions']
+}
+
+/** 命令快捷键的新增/编辑表单（binding 为 null 表示新增） */
+function openHotkeyForm(ctx: SearchContext, s: AppSettings, binding: HotkeyBinding | null) {
+  const bindings = s.commandHotkeys ?? []
+  openForm(ctx, binding ? `编辑：${binding.label}` : '添加命令快捷键', '⌨️', {
+    note: '按下组合键 = 唤起启动器并自动执行该搜索词的第一条结果。比如「app code」直达 VS Code。',
+    submitLabel: binding ? '保存修改' : '添加快捷键',
+    fields: [
+      { key: 'label', label: '名称', type: 'text', defaultValue: binding?.label ?? '', placeholder: '打开 VS Code' },
+      {
+        key: 'query',
+        label: '搜索词',
+        type: 'text',
+        defaultValue: binding?.query ?? '',
+        placeholder: 'app code / sys 锁屏 / clip …',
+        hint: '热键触发时在启动器里执行的完整输入'
+      },
+      {
+        key: 'accelerator',
+        label: '组合键',
+        type: 'text',
+        defaultValue: binding?.accelerator ?? '',
+        placeholder: 'Ctrl+Alt+K',
+        hint: '支持 Ctrl / Alt / Shift / Win 修饰键 + 字母数字 / F1-F24'
+      }
+    ],
+    async submit(values) {
+      const label = values.label.trim()
+      const query = values.query.trim()
+      const accelerator = normalizeAccelerator(values.accelerator)
+      if (!label) return '请填写名称'
+      if (!query) return '请填写搜索词'
+      if (!accelerator) return '请填写组合键，如 Ctrl+Alt+K'
+      if (!isValidAccelerator(accelerator)) return `组合键语法不对：${accelerator}`
+      const others = bindings.filter((b) => !binding || b.id !== binding.id)
+      const conflicts = findHotkeyConflicts(s.hotkey, [
+        ...others,
+        { id: 'next', label, query, accelerator }
+      ])
+      if (conflicts.length) return `组合键冲突：${conflicts.join('、')}，请换一个`
+      const next: HotkeyBinding[] = [
+        ...others,
+        { id: binding?.id ?? `hk-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, label, query, accelerator }
+      ]
+      await api.settings.set('commandHotkeys', next)
+      return binding ? '已保存，立即生效' : '已添加，立即生效'
+    }
+  })
 }
 
 function rows(ctx: SearchContext): SettingRow[] {
@@ -373,6 +423,108 @@ function rows(ctx: SearchContext): SettingRow[] {
       }
     ]
   })
+
+  /* ---------------- 命令快捷键 ---------------- */
+  {
+    const bindings = s.commandHotkeys ?? []
+    out.push({
+      id: 'command-hotkeys',
+      title: '命令快捷键',
+      subtitle: bindings.length
+        ? `${bindings.length} 个绑定，如 ${bindings[0].accelerator} → ${bindings[0].query}`
+        : '给任意搜索词绑一个全局组合键，按下即执行',
+      icon: '⌨️',
+      keywords: ['hotkey', 'shortcut', '快捷键', '热键', '绑定', 'command hotkey'],
+      actions: [
+        {
+          id: 'add',
+          name: '添加快捷键',
+          primary: true,
+          shortcut: ['↵'],
+          run() {
+            openHotkeyForm(ctx, s, null)
+          }
+        },
+        {
+          id: 'list',
+          name: '查看全部绑定',
+          shortcut: ['Ctrl', 'L'],
+          run() {
+            ctx.push({
+              title: '命令快捷键',
+              icon: emoji('⌨️'),
+              description: '选中一条回车编辑，Ctrl+X 删除',
+              items: bindings.map((b) => ({
+                id: `hk:${b.id}`,
+                providerId: 'settings',
+                title: `${b.label} · ${b.accelerator}`,
+                subtitle: `按下执行搜索「${b.query}」`,
+                icon: emoji('⌨️'),
+                keywords: [b.label, b.query, b.accelerator],
+                usageKey: `hk:${b.id}`,
+                actions: [
+                  {
+                    id: 'edit',
+                    name: '编辑',
+                    primary: true,
+                    shortcut: ['↵'],
+                    run() {
+                      openHotkeyForm(ctx, s, b)
+                    }
+                  },
+                  {
+                    id: 'del',
+                    name: '删除',
+                    shortcut: ['Ctrl', 'X'],
+                    icon: '🗑️',
+                    async run({ toast, refresh }) {
+                      await api.settings.set(
+                        'commandHotkeys',
+                        (s.commandHotkeys ?? []).filter((x) => x.id !== b.id)
+                      )
+                      toast('已删除')
+                      refresh()
+                    }
+                  }
+                ]
+              }))
+            })
+          }
+        }
+      ]
+    })
+    for (const binding of bindings) {
+      out.push({
+        id: `hk:${binding.id}`,
+        title: `${binding.label} · ${binding.accelerator}`,
+        subtitle: `按下执行搜索「${binding.query}」`,
+        icon: '⌨️',
+        keywords: [binding.label, binding.query, binding.accelerator],
+        actions: [
+          {
+            id: 'edit',
+            name: '编辑',
+            primary: true,
+            shortcut: ['↵'],
+            run() {
+              openHotkeyForm(ctx, s, binding)
+            }
+          },
+          {
+            id: 'del',
+            name: '删除',
+            shortcut: ['Ctrl', 'X'],
+            icon: '🗑️',
+            async run({ toast, refresh }) {
+              await api.settings.set('commandHotkeys', (s.commandHotkeys ?? []).filter((x) => x.id !== binding.id))
+              toast('已删除')
+              refresh()
+            }
+          }
+        ]
+      })
+    }
+  }
 
   /* ---------------- 自定义命令 ---------------- */
   out.push({

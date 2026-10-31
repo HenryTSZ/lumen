@@ -44,8 +44,21 @@ export interface AppSettings {
   disabledPlugins: string[]
   /** 是否允许安装远程插件（从市场 URL 下载代码） */
   allowRemotePlugins: boolean
+  /** 给任意搜索词绑定的全局快捷键 */
+  commandHotkeys: HotkeyBinding[]
   /** 首次运行 */
   firstRun: boolean
+}
+
+/** 命令快捷键：把一个搜索词（应用名、触发词、命令…）绑到全局组合键 */
+export interface HotkeyBinding {
+  id: string
+  /** 展示名 */
+  label: string
+  /** 触发时在启动器里执行的搜索词 */
+  query: string
+  /** Electron accelerator，如 Control+Alt+K */
+  accelerator: string
 }
 
 /* ------------------------------------------------------------------ */
@@ -415,4 +428,9 @@ export interface MachineInfo {
   snippetsFile: string
 }
 
-export type LumenEventChannel = 'window:shown' | 'window:hidden' | 'settings:changed' | 'index:status'
+export type LumenEventChannel =
+  | 'window:shown'
+  | 'window:hidden'
+  | 'settings:changed'
+  | 'index:status'
+  | 'hotkey:trigger'

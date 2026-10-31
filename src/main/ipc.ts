@@ -41,7 +41,30 @@ import { userCommands } from './services/commands'
 import { usage } from './services/usage'
 import { quicklinks, snippets } from './services/data'
 import { bookmarks } from './services/bookmarks'
-import { createLauncherWindow, getWindow, hideLauncher, registerWindowIpc } from './window'
+import { createLauncherWindow, getWindow, hideLauncher, registerWindowIpc, showLauncher, toggleLauncher } from './window'
+import { applyHotkeys } from './services/hotkeys'
+
+/**
+ * （重新）注册所有全局快捷键：主唤起键 + 命令快捷键。
+ * 唤起键被占用时自动降级并把结果写回设置。
+ */
+export function reapplyHotkeys(): { launcherKey: string; failed: string[] } {
+  const result = applyHotkeys(store.getAll(), {
+    toggleLauncher: () => toggleLauncher(),
+    runCommand: (query) => {
+      showLauncher()
+      getWindow()?.webContents.send('hotkey:trigger', query)
+    }
+  })
+  if (result.launcherKey && result.launcherKey !== store.get('hotkey')) {
+    store.set('hotkey', result.launcherKey)
+    broadcast('settings:changed', store.getAll())
+  }
+  for (const accelerator of result.failed) {
+    console.warn(`[hotkeys] 快捷键 ${accelerator} 注册失败（可能被其他程序占用或冲突）`)
+  }
+  return result
+}
 
 export function registerIpcHandlers(): void {
   registerWindowIpc()
@@ -50,6 +73,8 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('settings:get', (): AppSettings => store.getAll())
   ipcMain.handle('settings:set', (_e, patch: Partial<AppSettings>): AppSettings => {
     const next = store.patch(patch)
+    // 快捷键相关字段变化时需要主进程重新注册
+    if ('hotkey' in patch || 'commandHotkeys' in patch) reapplyHotkeys()
     broadcast('settings:changed', next)
     return next
   })

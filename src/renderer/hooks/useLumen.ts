@@ -108,7 +108,7 @@ export function useLumen() {
 
   /* ---------------- 搜索 ---------------- */
   const runSearch = useCallback(
-    async (input: string, currentSettings: AppSettings) => {
+    async (input: string, currentSettings: AppSettings): Promise<ResultItem[]> => {
       const id = ++searchId.current
       setLoading(true)
 
@@ -164,20 +164,20 @@ export function useLumen() {
         }
       }
 
-      const execute = async () => {
+      const execute = async (): Promise<ResultItem[]> => {
         // 二级页：只做本地过滤，不重新请求
         const top = stackRef.current[stackRef.current.length - 1]
         if (top?.kind === 'page') {
           // 表单页由自身管理输入，不做过滤
           if (!input.trim() || top.form) {
             if (searchId.current === id) setLoading(false)
-            return
+            return []
           }
           const needle = input.trim().toLowerCase()
           const filtered = top.items.filter((item) =>
             `${item.title} ${item.subtitle ?? ''}`.toLowerCase().includes(needle)
           )
-          if (searchId.current !== id) return
+          if (searchId.current !== id) return []
           setStack((prev) => {
             const next = [...prev]
             const currentTop = next[next.length - 1]
@@ -191,7 +191,7 @@ export function useLumen() {
           })
           setSelected(0)
           setLoading(false)
-          return
+          return filtered
         }
 
         const { provider, args } = resolve(input)
@@ -203,7 +203,7 @@ export function useLumen() {
           } catch (error) {
             console.error(`[provider:${provider.id}]`, error)
           }
-          if (searchId.current !== id) return
+          if (searchId.current !== id) return []
           setStack([
             toScreen({
               kind: 'search',
@@ -215,7 +215,7 @@ export function useLumen() {
             })
           ])
           setLoading(false)
-          return
+          return items
         }
 
         // 聚合搜索：并行调用所有参与 root 的扩展，各自成组
@@ -229,7 +229,7 @@ export function useLumen() {
             }
           })
         )
-        if (searchId.current !== id) return
+        if (searchId.current !== id) return []
 
         const groups: Group[] = []
         for (const { entry, items } of results
@@ -292,9 +292,10 @@ export function useLumen() {
           }
         ])
         setLoading(false)
+        return orderedGroups.flatMap((g) => g.items)
       }
 
-      await execute()
+      return await execute()
     },
     [close, toastMessage]
   )
@@ -367,6 +368,22 @@ export function useLumen() {
     },
     [close, refresh, reloadSettings, toastMessage]
   )
+
+  /* ---------------- 命令快捷键 ---------------- */
+  useEffect(() => {
+    // 主进程在全局快捷键命中后推送搜索词：执行第一条结果，
+    // 没有结果时保留窗口让用户手动选择
+    const off = api.on('hotkey:trigger', (query: string) => {
+      const currentSettings = settingsRef.current
+      if (!currentSettings || !query) return
+      setQuery(query)
+      void runSearch(query, currentSettings).then((items) => {
+        const first = items?.[0]
+        if (first?.actions.length) void runAction(first, 0)
+      })
+    })
+    return off
+  }, [runSearch, runAction])
 
   return {
     settings,

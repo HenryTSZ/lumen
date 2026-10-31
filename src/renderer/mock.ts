@@ -43,6 +43,14 @@ let settings: AppSettings = {
   pluginsIndexUrl: '',
   disabledPlugins: [],
   allowRemotePlugins: true,
+  commandHotkeys: [
+    {
+      id: 'demo-code',
+      label: '打开 VS Code',
+      query: 'app code',
+      accelerator: 'Ctrl+Alt+C'
+    }
+  ],
   firstRun: true
 }
 

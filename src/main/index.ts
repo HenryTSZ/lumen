@@ -1,6 +1,6 @@
 import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 import { store } from './store'
-import { registerIpcHandlers, broadcast } from './ipc'
+import { registerIpcHandlers, broadcast, reapplyHotkeys } from './ipc'
 import {
   applyAutoLaunch,
   createLauncherWindow,
@@ -45,7 +45,7 @@ function bootstrap(): void {
   void files.bootstrap(store.getAll())
   void applications.scan().then(() => broadcast('index:status', files.indexStatus))
 
-  registerGlobalHotkey(store.get('hotkey'))
+  registerGlobalHotkeys()
 
   app.on('activate', () => showLauncher())
   // 所有窗口关闭时不退出：启动器需要常驻后台等待下一次唤起
@@ -60,31 +60,16 @@ function bootstrap(): void {
   })
 }
 
-/** 注册/注销全局热键，失败时降级为用户最可能可用的组合 */
-function registerGlobalHotkey(accelerator: string): void {
-  globalShortcut.unregisterAll()
-  const candidates = [accelerator, 'Ctrl+Space', 'Alt+Space', 'Ctrl+Alt+Space']
-  for (const candidate of candidates) {
-    if (!candidate) continue
-    try {
-      if (globalShortcut.register(candidate, () => toggleLauncher())) {
-        if (candidate !== accelerator) {
-          store.set('hotkey', candidate)
-          broadcast('settings:changed', store.getAll())
-        }
-        return
-      }
-    } catch {
-      /* 继续尝试下一个组合 */
-    }
-  }
-  console.warn('[hotkey] 所有候选快捷键都被占用，请手动在设置中更换')
+/** 注册主唤起键 + 用户命令快捷键（失败自动降级并写回设置） */
+function registerGlobalHotkeys(): void {
+  reapplyHotkeys()
 }
 
 /** 设置变更时需要主进程配合处理的动作 */
 function registerHotkeyActions(): void {
   ipcMain.handle('settings:set-hotkey', (_e, accelerator: string) => {
-    registerGlobalHotkey(accelerator)
+    store.set('hotkey', accelerator)
+    reapplyHotkeys()
     return store.getAll().hotkey
   })
   ipcMain.handle('settings:set-autolaunch', (_e, enabled: boolean) => {
